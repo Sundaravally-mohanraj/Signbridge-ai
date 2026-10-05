@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SignBridge AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+        <div class="brand-center">
+            <img src="logo.svg" class="login-logo">
+            <h1>SignBridge AI</h1>
+            <p>Communication without barriers</p>
+        </div>
+
+        <div class="login-form">
+            <h2>Welcome back</h2>
+            <p class="muted">Sign in to continue to SignBridge AI</p>
+
+            <label>Email</label>
+            <input id="loginEmail" type="email" placeholder="you@example.com">
+
+            <label>Password</label>
+            <input id="loginPassword" type="password" placeholder="Enter password">
+
+            <button class="primary-btn full" onclick="login()">Sign In</button>
+
+            <p class="login-note">
+                Demo account: enter any email and password.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="app" class="app hidden">
+
+<header class="topbar">
+    <div class="brand">
+        <img src="logo.svg">
+        <div>
+            <strong>SignBridge AI</strong>
+            <span>Communication without barriers</span>
+        </div>
+    </div>
+
+    <div class="top-user">
+        <span id="userEmail"></span>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+    <button class="nav active" onclick="showPage('home',this)">⌂ <span>Home</span></button>
+    <button class="nav" onclick="showPage('practice',this)">✋ <span>Practice</span></button>
+    <button class="nav" onclick="showPage('people',this)">♧ <span>People</span></button>
+    <button class="nav" onclick="showPage('meet',this)">▣ <span>Meet</span></button>
+
+    <div class="side-bottom">
+        <div class="status-dot"></div>
+        <span>SignBridge Ready</span>
+    </div>
+</aside>
+
+<main class="content">
+
+<!-- HOME -->
+<section id="home" class="page">
+    <div class="hero">
+        <div>
+            <span class="eyebrow">ACCESSIBLE COMMUNICATION</span>
+            <h1>Connect beyond words.</h1>
+            <p>
+                Practice Indian Sign Language and communicate with friends
+                or employees through accessible video meetings.
+            </p>
+
+            <div class="hero-actions">
+                <button class="primary-btn" onclick="openMeetChoice()">Meet Someone</button>
+                <button class="secondary-btn" onclick="showPage('practice')">Practice Signs</button>
+            </div>
+        </div>
+
+        <div class="hero-symbol">
+            <div class="bridge-circle">
+                <span>✋</span>
+                <span>↔</span>
+                <span>✋</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <h2>What you can do</h2>
+    </div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">✋</div>
+            <h3>Practice ISL</h3>
+            <p>Practice signs using your camera and receive recognition feedback.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">◉</div>
+            <h3>Meet Someone</h3>
+            <p>Start a video meeting with friends or employees using a meeting code.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">Aa</div>
+            <h3>ISL → English</h3>
+            <p>Recognized signs can be converted into English text and speech.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">♪</div>
+            <h3>English → Text</h3>
+            <p>Spoken English can be converted into text for accessible communication.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRACTICE -->
+<section id="practice" class="page hidden">
+    <div class="page-heading">
+        <span class="eyebrow">LEARN & PRACTICE</span>
+        <h1>Practice Indian Sign Language</h1>
+        <p>Use your camera and practice the available signs.</p>
+    </div>
+
+    <div class="practice-layout">
+        <div class="camera-card">
+            <div class="camera-title">
+                <h3>Practice Camera</h3>
+                <span id="practiceStatus">Camera not started</span>
+            </div>
+
+            <div class="video-wrap">
+                <video id="practiceVideo" autoplay muted playsinline></video>
+                <canvas id="practiceCanvas"></canvas>
+                <div id="practiceOverlay">Camera preview</div>
+            </div>
+
+            <button class="primary-btn full" onclick="startPractice()">Start Camera</button>
+
+            <div class="recognized">
+                <span>Recognized Sign</span>
+                <strong id="practiceResult">Waiting...</strong>
+            </div>
+        </div>
+
+        <div class="sign-list">
+            <h3>Practice Signs</h3>
+            <p class="muted">Choose a sign to practice.</p>
+
+            <button class="sign-item" onclick="selectPractice('Hello','👋',this)">
+                <span>👋</span><div><strong>Hello</strong><small>Greeting</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Thank You','🙏',this)">
+                <span>🙏</span><div><strong>Thank You</strong><small>Gratitude</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Yes','👍',this)">
+                <span>👍</span><div><strong>Yes</strong><small>Agreement</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('No','✋',this)">
+                <span>✋</span><div><strong>No</strong><small>Disagreement</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Help','🆘',this)">
+                <span>🆘</span><div><strong>Help</strong><small>Request assistance</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Good','👌',this)">
+                <span>👌</span><div><strong>Good</strong><small>Positive</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Welcome','🤝',this)">
+                <span>🤝</span><div><strong>Welcome</strong><small>Greeting</small></div>
+            </button>
+
+            <button class="sign-item" onclick="selectPractice('Please','🤲',this)">
+                <span>🤲</span><div><strong>Please</strong><small>Polite request</small></div>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- PEOPLE -->
+<section id="people" class="page hidden">
+    <div class="page-heading row-heading">
+        <div>
+            <span class="eyebrow">YOUR CONNECTIONS</span>
+            <h1>People</h1>
+            <p>Choose someone to start an accessible meeting.</p>
+        </div>
+        <button class="primary-btn" onclick="addPerson()">+ Add Person</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="filterPeople('all',this)">All</button>
+        <button class="tab" onclick="filterPeople('friend',this)">Friends</button>
+        <button class="tab" onclick="filterPeople('employee',this)">Employees</button>
+    </div>
+
+    <div id="peopleGrid" class="people-grid"></div>
+</section>
+
+<!-- MEET -->
+<section id="meet" class="page hidden">
+
+    <div id="meetingLobby">
+        <div class="page-heading">
+            <span class="eyebrow">VIDEO COMMUNICATION</span>
+            <h1>Meet Someone</h1>
+            <p>Start a meeting or join an existing SignBridge meeting.</p>
+        </div>
+
+        <div class="meeting-options">
+
+            <div class="meeting-card">
+                <div class="big-icon">＋</div>
+                <h2>New Meeting</h2>
+                <p>Create a meeting and share the meeting code with another person.</p>
+                <button class="primary-btn" onclick="createMeeting()">Start New Meeting</button>
+            </div>
+
+            <div class="meeting-card">
+                <div class="big-icon">↗</div>
+                <h2>Join Meeting</h2>
+                <p>Enter the meeting code received from your friend or employee.</p>
+                <input id="joinCode" class="meeting-input" placeholder="Example: AB7KQ2">
+                <button class="secondary-btn full" onclick="joinMeeting()">Join Meeting</button>
+            </div>
+
+        </div>
+
+        <div class="connection-info">
+            <strong>How connection works</strong>
+            <ol>
+                <li>Create a new meeting.</li>
+                <li>SignBridge generates a meeting code.</li>
+                <li>Send the code to the other person.</li>
+                <li>They enter the code and click Join Meeting.</li>
+                <li>Both users enter the same video meeting.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="meetingRoom" class="hidden">
+        <div class="meeting-header">
+            <div>
+                <span class="eyebrow">SIGNBRIDGE MEETING</span>
+                <h2 id="meetingTitle">Meeting Room</h2>
+            </div>
+
+            <div class="meeting-code-box">
+                <span>Meeting Code</span>
+                <strong id="meetingCodeDisplay">------</strong>
+                <button onclick="copyMeetingCode()">Copy</button>
+            </div>
+        </div>
+
+        <div class="meeting-grid">
+
+            <div class="videos">
+                <div class="video-tile local">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <span class="video-label">You</span>
+                </div>
+
+                <div class="video-tile">
+                    <video id="remoteVideo" autoplay playsinline></video>
+                    <div id="waitingRemote" class="waiting">
+                        Waiting for the other person...
+                    </div>
+                    <span class="video-label">Other participant</span>
+                </div>
+            </div>
+
+            <div class="meeting-reader">
+                <div class="reader-head">
+                    <div>
+                        <span class="eyebrow">SIGNBRIDGE READER</span>
+                        <h3>Live Communication</h3>
+                    </div>
+                    <span id="readerStatus" class="live-badge">● LIVE</span>
+                </div>
+
+                <div class="reader-result">
+                    <span>ISL → English</span>
+                    <strong id="meetingSignResult">Waiting for a sign...</strong>
+                    <button onclick="speakMeetingText()" class="small-btn">🔊 Speak</button>
+                </div>
+
+                <div class="speech-result">
+                    <span>English Speech → Text</span>
+                    <p id="speechText">Press Listen to start speech recognition.</p>
+                </div>
+
+                <div class="conversation">
+                    <div class="conversation-head">
+                        <strong>Conversation</strong>
+                        <button onclick="clearConversation()">Clear</button>
+                    </div>
+                    <div id="conversationList"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="meeting-controls">
+            <button id="muteBtn" onclick="toggleMute()">🎙 Mute</button>
+            <button id="cameraBtn" onclick="toggleCamera()">📷 Camera</button>
+            <button id="readerBtn" onclick="toggleReader()">✋ Reader</button>
+            <button onclick="startListening()">🔊 Listen</button>
+            <button class="end-call" onclick="endMeeting()">End Meeting</button>
+        </div>
+    </div>
+</section>
+
+</main>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+<div id="sbPersonalLogin" style="position:fixed;inset:0;z-index:99999;background:#071426;color:white;display:flex;align-items:center;justify-content:center;font-family:Arial;padding:20px"><div style="width:100%;max-width:520px;background:#0d1d31;padding:35px;border-radius:25px;box-sizing:border-box"><div style="text-align:center"><h1>SignBridge <span style="color:#55d6a0">AI</span></h1><p style="color:#8fa8bf">Communication without barriers</p></div><div id="sbChoice"><h2 style="text-align:center">Choose your SignBridge space</h2><button id="sbFriendChoice" style="width:100%;padding:20px;margin:10px 0;border-radius:15px;background:#102944;color:white;border:1px solid #55d6a0;text-align:left;cursor:pointer"><b style="font-size:20px">👥 Friend Login</b><br><small>Personal space for connecting with friends.</small></button><button id="sbEmployeeChoice" style="width:100%;padding:20px;margin:10px 0;border-radius:15px;background:#102944;color:white;border:1px solid #4fd1ff;text-align:left;cursor:pointer"><b style="font-size:20px">💼 Employee Login</b><br><small>Professional space for workplace communication.</small></button></div><div id="sbFriendForm" style="display:none"><button id="sbFriendBack" style="background:none;border:0;color:#8fa8bf;cursor:pointer">← Back</button><h2>👥 Welcome, Friend!</h2><p style="color:#8fa8bf">Sign in to your personal SignBridge space.</p><input id="sbFriendName" placeholder="Your Name" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><input id="sbFriendEmail" type="email" placeholder="Email Address" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><input id="sbFriendPassword" type="password" placeholder="Password" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><button id="sbFriendLogin" style="width:100%;padding:14px;margin-top:15px;border:0;border-radius:10px;background:#55d6a0;font-weight:bold;cursor:pointer">Continue as Friend →</button><p id="sbFriendError" style="color:#ff8d8d;text-align:center"></p></div><div id="sbEmployeeForm" style="display:none"><button id="sbEmployeeBack" style="background:none;border:0;color:#8fa8bf;cursor:pointer">← Back</button><h2>💼 Welcome to WorkSpace</h2><p style="color:#8fa8bf">Sign in to your professional SignBridge space.</p><input id="sbEmployeeId" placeholder="Employee ID" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><input id="sbEmployeeEmail" type="email" placeholder="Work Email" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><select id="sbEmployeeDepartment" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><option value="">Select Department</option><option>CSE / IT</option><option>Engineering</option><option>Human Resources</option><option>Finance</option><option>Operations</option><option>Management</option></select><input id="sbEmployeePassword" type="password" placeholder="Password" style="width:100%;box-sizing:border-box;padding:13px;margin:7px 0;background:#071426;color:white;border:1px solid #294761;border-radius:10px"><button id="sbEmployeeLogin" style="width:100%;padding:14px;margin-top:15px;border:0;border-radius:10px;background:#4fd1ff;font-weight:bold;cursor:pointer">Enter WorkSpace →</button><p id="sbEmployeeError" style="color:#ff8d8d;text-align:center"></p></div></div></div><script>(function(){var o=document.getElementById("sbPersonalLogin");if(!o)return;var type=localStorage.getItem("signbridgeType");if(type==="friend"||type==="employee"){o.remove()}else{o.style.display="flex"};var c=document.getElementById("sbChoice"),f=document.getElementById("sbFriendForm"),w=document.getElementById("sbEmployeeForm");document.getElementById("sbFriendChoice").onclick=function(){c.style.display="none";f.style.display="block"};document.getElementById("sbEmployeeChoice").onclick=function(){c.style.display="none";w.style.display="block"};document.getElementById("sbFriendBack").onclick=function(){f.style.display="none";c.style.display="block"};document.getElementById("sbEmployeeBack").onclick=function(){w.style.display="none";c.style.display="block"};document.getElementById("sbFriendLogin").onclick=function(){var n=document.getElementById("sbFriendName").value.trim(),e=document.getElementById("sbFriendEmail").value.trim(),p=document.getElementById("sbFriendPassword").value;if(!n||!e||!p){document.getElementById("sbFriendError").textContent="Please complete all details.";return}localStorage.setItem("signbridgeType","friend");localStorage.setItem("signbridgeName",n);localStorage.setItem("signbridgeEmail",e);o.remove()};document.getElementById("sbEmployeeLogin").onclick=function(){var i=document.getElementById("sbEmployeeId").value.trim(),e=document.getElementById("sbEmployeeEmail").value.trim(),d=document.getElementById("sbEmployeeDepartment").value,p=document.getElementById("sbEmployeePassword").value;if(!i||!e||!d||!p){document.getElementById("sbEmployeeError").textContent="Please complete all details.";return}localStorage.setItem("signbridgeType","employee");localStorage.setItem("signbridgeName",i);localStorage.setItem("signbridgeEmail",e);localStorage.setItem("signbridgeDepartment",d);o.remove()}})()</script></body>
+</html>
+
+

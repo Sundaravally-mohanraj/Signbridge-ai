@@ -1,0 +1,6 @@
+﻿services:
+  - type: web
+    name: signbridge-ai
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .

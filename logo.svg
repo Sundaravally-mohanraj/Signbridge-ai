@@ -1,0 +1,55 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#4b9cff"/>
+<stop offset="1" stop-color="#69d7e8"/>
+</linearGradient>
+</defs>
+
+<rect width="200" height="200" rx="48" fill="#081a30"/>
+
+<!-- left person/hand -->
+<path d="M42 91
+C42 72 53 58 68 58
+C76 58 82 63 85 71
+L88 82
+L88 53
+C88 47 93 43 99 45
+C103 46 106 50 106 55
+L106 83
+L112 61
+C113 55 118 52 123 54
+C128 56 130 60 129 65
+L124 91
+C122 104 113 114 100 119
+L78 128
+C63 134 48 126 43 112
+C41 105 40 98 42 91Z"
+fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- right hand -->
+<path d="M158 91
+C158 72 147 58 132 58
+C124 58 118 63 115 71
+L112 82
+L112 53
+C112 47 107 43 101 45
+C97 46 94 50 94 55
+L94 83
+L88 61
+C87 55 82 52 77 54
+C72 56 70 60 71 65
+L76 91
+C78 104 87 114 100 119
+L122 128
+C137 134 152 126 157 112
+C159 105 160 98 158 91Z"
+fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- bridge -->
+<path d="M61 145 Q100 120 139 145"
+fill="none" stroke="#5ee6a8" stroke-width="7" stroke-linecap="round"/>
+
+<circle cx="61" cy="145" r="6" fill="#5ee6a8"/>
+<circle cx="139" cy="145" r="6" fill="#5ee6a8"/>
+</svg>
